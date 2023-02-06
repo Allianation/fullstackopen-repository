@@ -11,12 +11,17 @@ const App = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    const newPerson = {
-      name: newName,
-    };
+    const personsNames = persons.map((person) => person.name);
 
-    setPersons(persons.concat(newPerson));
-    setNewName("");
+    if (personsNames.includes(newName)) {
+      alert(`${newName} is already added to phonebook.`);
+    } else {
+      const newPerson = {
+        name: newName,
+      };
+      setPersons(persons.concat(newPerson));
+      setNewName("");
+    }
   };
 
   return (
@@ -33,7 +38,7 @@ const App = () => {
       <h2>Numbers</h2>
       <div>
         {persons.map((person) => {
-          return <div key= {person.name}>{person.name}</div>;
+          return <div key={person.name}>{person.name}</div>;
         })}
       </div>
     </div>
