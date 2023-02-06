@@ -2,7 +2,13 @@ const Statistic = (props) => {
   return (
     <tr>
       <td>{props.text}</td>
-      <td>{props.value}</td>
+      {isNaN(props.value) ? (
+        <td>0</td>
+      ) : (
+        <td>
+          {props.value} {props.symbol}
+        </td>
+      )}
     </tr>
   );
 };
