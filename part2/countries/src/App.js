@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import Filter from "./components/Filter";
+import Countries from "./components/Countries";
+import Country from "./components/Country";
 
 const App = () => {
   const [countries, setCountries] = useState([]);
   const [searchName, setSearchName] = useState("");
+  const [country, setCountry] = useState({});
+  const [showCountry, setShowCountry] = useState(false);
 
   useEffect(() => {
     axios
@@ -16,17 +21,18 @@ const App = () => {
 
   const handleChange = (event) => {
     setSearchName(event.target.value);
+    setShowCountry(false);
+  };
+
+  const handleClick = (country) => {
+    setCountry(country);
+    setShowCountry(true);
   };
 
   return (
     <div>
-      find countries:
-      <input
-        type="text"
-        onChange={handleChange}
-        value={searchName}
-        name="search"
-      />
+      <Filter handleChange={handleChange} searchName={searchName} />
+
       <div>
         {countries.length > 10 && (
           <div>Too many matches, specify another filter</div>
@@ -34,34 +40,18 @@ const App = () => {
 
         {countries.length >= 2 && countries.length <= 10 &&
           countries.map((country) => {
-            return <div key={country.name.common}>{country.name.common}</div>;
+            return (
+              <Countries
+                country={country}
+                handleClick={handleClick}
+                key={country.name.common}
+              />
+            );
           })}
 
-        {countries.length === 1 && (
-          <div>
-            <h2>{countries[0].name.common}</h2>
-            <div>
-              <div>capital {countries[0].capital}</div>
-              <div>population {countries[0].population}</div>
-            </div>
-            <div>
-              <h3>languages</h3>
-              <ul>
-                {Object.values(countries[0].languages).map((e, i) => (
-                  <li key={i}>{e}</li>
-                ))}
-              </ul>
-            </div>
-            <br />
-            <div>
-              <img
-                src={countries[0].flags.png}
-                alt="Country Flag PNG"
-                width="6%"
-              />
-            </div>
-          </div>
-        )}
+        {countries.length === 1 && !showCountry && <Country country={countries[0]} />}
+
+        {showCountry && <Country country={country} />}
       </div>
     </div>
   );
