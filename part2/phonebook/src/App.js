@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Filter } from "./components/Filter";
 import { PersonForm } from "./components/PersonForm";
 import Persons from "./components/Persons";
-import { getAll, create, delete_ } from "./services/persons";
+import { getAll, getByName, update, create, delete_ } from "./services/persons";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -42,22 +42,35 @@ const App = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    const personsNames = persons.map((person) => person.name);
+    getByName(newName).then((response) => {
+      const person = response.data[0];
 
-    if (personsNames.includes(newName)) {
-      alert(`${newName} is already added to phonebook.`);
-    } else {
       const newPerson = {
         name: newName,
         number: newNumber,
       };
 
-      create(newPerson).then((response) => {
-        setPersons(persons.concat(response.data));
-        setNewName("");
-        setNewNumber("");
-      });
-    }
+      if (person) {
+        const message = `${newName} is already added to phonebook, replace the old number with a new one?`;
+
+        if (window.confirm(message)) {
+          update(person.id, newPerson).then((response) => {
+            getAll().then((response) => {
+              const { data } = response;
+              setPersons(data);
+              setNewName("");
+              setNewNumber("");
+            });
+          });
+        }
+      } else {
+        create(newPerson).then((response) => {
+          setPersons(persons.concat(response.data));
+          setNewName("");
+          setNewNumber("");
+        });
+      }
+    });
   };
 
   return (
