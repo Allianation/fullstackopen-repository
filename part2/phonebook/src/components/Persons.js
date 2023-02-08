@@ -1,7 +1,7 @@
 import React from "react";
 import Person from "./Person";
 
-const Persons = ({ persons, searchName }) => {
+const Persons = ({ persons, searchName, handleClick }) => {
   return (
     <div>
       {persons.map((person) => {
@@ -10,7 +10,7 @@ const Persons = ({ persons, searchName }) => {
             .toLocaleLowerCase()
             .search(searchName.toLocaleLowerCase()) !== -1
         ) {
-          return <Person key={person.name} {...person} />;
+          return <Person key={person.name} {...person} handleClick={handleClick} />;
         } else {
           return null;
         }

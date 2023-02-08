@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Filter } from "./components/Filter";
 import { PersonForm } from "./components/PersonForm";
 import Persons from "./components/Persons";
-import { getAll, create } from "./services/persons";
+import { getAll, create, delete_ } from "./services/persons";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -29,6 +29,16 @@ const App = () => {
     }
   };
 
+  const handleClick = (id, name) => {
+    const message = `Delete ${name}`;
+
+    if (window.confirm(message)) {
+      delete_(id);
+      const newPersons = persons.filter((p) => p.id !== id);
+      setPersons(newPersons);
+    }
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
 
@@ -41,7 +51,7 @@ const App = () => {
         name: newName,
         number: newNumber,
       };
-    
+
       create(newPerson).then((response) => {
         setPersons(persons.concat(response.data));
         setNewName("");
@@ -67,7 +77,11 @@ const App = () => {
 
       <h2>Numbers</h2>
 
-      <Persons persons={persons} searchName={searchName} />
+      <Persons
+        persons={persons}
+        searchName={searchName}
+        handleClick={handleClick}
+      />
     </div>
   );
 };
