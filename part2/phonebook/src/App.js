@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Filter } from "./components/Filter";
+import Notification from "./components/Notification";
 import { PersonForm } from "./components/PersonForm";
 import Persons from "./components/Persons";
 import { getAll, getByName, update, create, delete_ } from "./services/persons";
+import "./App.css";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchName, setSearchName] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     getAll().then((response) => {
@@ -33,9 +37,18 @@ const App = () => {
     const message = `Delete ${name}`;
 
     if (window.confirm(message)) {
-      delete_(id);
-      const newPersons = persons.filter((p) => p.id !== id);
-      setPersons(newPersons);
+      delete_(id)
+        .then((response) => {
+          const newPersons = persons.filter((p) => p.id !== id);
+          setPersons(newPersons);
+
+          setSuccessMessage(`Deleted ${name}`);
+          setTimeout(() => setSuccessMessage(null), 5000);
+        })
+        .catch((error) => {
+          setErrorMessage(error.message);
+          setTimeout(() => setErrorMessage(null), 5000);
+        });
     }
   };
 
@@ -54,28 +67,49 @@ const App = () => {
         const message = `${newName} is already added to phonebook, replace the old number with a new one?`;
 
         if (window.confirm(message)) {
-          update(person.id, newPerson).then((response) => {
-            getAll().then((response) => {
-              const { data } = response;
-              setPersons(data);
-              setNewName("");
-              setNewNumber("");
+          update(person.id, newPerson)
+            .then((response) => {
+              getAll().then((response) => {
+                const { data } = response;
+                setPersons(data);
+                setNewName("");
+                setNewNumber("");
+              });
+              setSuccessMessage(`Updated ${newName}`);
+              setTimeout(() => setSuccessMessage(null), 5000);
+            })
+            .catch((error) => {
+              setErrorMessage(error.response.data.error);
+              setTimeout(() => setErrorMessage(null), 5000);
             });
-          });
         }
       } else {
-        create(newPerson).then((response) => {
-          setPersons(persons.concat(response.data));
-          setNewName("");
-          setNewNumber("");
-        });
+        create(newPerson)
+          .then((response) => {
+            setPersons(persons.concat(response.data));
+            setNewName("");
+            setNewNumber("");
+
+            setSuccessMessage(`Added ${newName}`);
+            setTimeout(() => setSuccessMessage(null), 5000);
+          })
+          .catch((error) => {
+            setErrorMessage(error.response.data.error);
+            setTimeout(() => setErrorMessage(null), 5000);
+          });
       }
     });
   };
 
   return (
-    <div>
+    <div className="app">
       <h2>Phonebook</h2>
+
+      {successMessage && (
+        <Notification type="success" message={successMessage} />
+      )}
+
+      {errorMessage && <Notification type="error" message={errorMessage} />}
 
       <Filter handleChange={handleChange} searchName={searchName} />
 
