@@ -5,10 +5,6 @@ export const getAll = () => {
   return axios.get(baseUrl);
 };
 
-export const getByName = (name) => {
-  return axios.get(`${baseUrl}/?name=${name}`);
-};
-
 export const create = (newObject) => {
   return axios.post(baseUrl, newObject);
 };
