@@ -3,7 +3,7 @@ import { Filter } from "./components/Filter";
 import Notification from "./components/Notification";
 import { PersonForm } from "./components/PersonForm";
 import Persons from "./components/Persons";
-import { getAll, create, delete_ } from "./services/persons";
+import { getAll, getByName, update, create, delete_ } from "./services/persons";
 import "./App.css";
 
 const App = () => {
@@ -55,24 +55,49 @@ const App = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    const newPerson = {
-      name: newName,
-      number: newNumber,
-    };
+    getByName(newName).then((response) => {
+      
+      const newPerson = {
+        name: newName,
+        number: newNumber,
+      };
 
-    create(newPerson)
-      .then((response) => {
-        setPersons(persons.concat(response.data));
-        setNewName("");
-        setNewNumber("");
+      if (response.data) {
+        const message = `${newName} is already added to phonebook, replace the old number with a new one?`;
 
-        setSuccessMessage(`Added ${newName}`);
-        setTimeout(() => setSuccessMessage(null), 5000);
-      })
-      .catch((error) => {
-        setErrorMessage(error.response.data.error);
-        setTimeout(() => setErrorMessage(null), 5000);
-      });
+        if (window.confirm(message)) {
+          update(response.data.id, newPerson)
+            .then((response) => {
+              getAll().then((response) => {
+                const { data } = response;
+                setPersons(data);
+                setNewName("");
+                setNewNumber("");
+              });
+              setSuccessMessage(`Updated ${newName}`);
+              setTimeout(() => setSuccessMessage(null), 5000);
+            })
+            .catch((error) => {
+              setErrorMessage(error.response.data.error);
+              setTimeout(() => setErrorMessage(null), 5000);
+            });
+        }
+      } else {
+        create(newPerson)
+          .then((response) => {
+            setPersons(persons.concat(response.data));
+            setNewName("");
+            setNewNumber("");
+
+            setSuccessMessage(`Added ${newName}`);
+            setTimeout(() => setSuccessMessage(null), 5000);
+          })
+          .catch((error) => {
+            setErrorMessage(error.response.data.error);
+            setTimeout(() => setErrorMessage(null), 5000);
+          });
+      }
+    });
   };
 
   return (
