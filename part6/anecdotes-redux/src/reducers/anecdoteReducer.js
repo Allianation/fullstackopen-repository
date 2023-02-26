@@ -23,7 +23,7 @@ const reducer = (state = initialState, action) => {
   switch (action.type) {
     case "VOTE":
       const { id } = action.payload;
-      return state.map((anecdote) => {
+      const newState = state.map((anecdote) => {
         if (anecdote.id === id) {
           return {
             ...anecdote,
@@ -32,6 +32,16 @@ const reducer = (state = initialState, action) => {
         }
         return anecdote;
       });
+      newState.sort((a, b) => {
+        if (a.votes === b.votes) {
+          return 0;
+        }
+        if (a.votes > b.votes) {
+          return -1;
+        }
+        return 1;
+      });
+      return newState;
     case "NEW_ANECDOTE":
       return [...state, action.payload];
     default:
