@@ -49,5 +49,15 @@ const reducer = (state = initialState, action) => {
   }
 };
 
-export { asObject };
+const voteAnecdote = (id) => ({
+  type: "VOTE",
+  payload: { id },
+});
+
+const createAnecdote = (anecdote) => ({
+  type: "NEW_ANECDOTE",
+  payload: asObject(anecdote),
+});
+
+export { voteAnecdote, createAnecdote };
 export default reducer;
