@@ -1,10 +1,6 @@
-import { useSelector, useDispatch } from "react-redux";
-import { setNotification } from "../reducers/notificationReducer";
+import { useSelector } from "react-redux";
 
 const Notification = () => {
-  const dispatch = useDispatch();
-  dispatch(setNotification("Redux Toolkit is awesome!"));
-
   const notification = useSelector((state) => state.notification);
 
   const style = {
