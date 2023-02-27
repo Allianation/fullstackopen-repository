@@ -5,7 +5,7 @@ const filterSlice = createSlice({
   initialState: " ",
   reducers: {
     filterChange(state, action) {
-      return action.payload; // mutate the state all you want with immer
+      return action.payload;
     },
   },
 });
