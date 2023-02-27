@@ -4,7 +4,7 @@ import { voteAnecdote } from "../reducers/anecdoteReducer";
 
 const AnecdoteList = () => {
   const anecdotes = useSelector((state) => state.anecdotes);
-  const { filterBy } = useSelector((state) => state.filter);
+  const filter = useSelector((state) => state.filter);
 
   const dispatch = useDispatch();
 
@@ -18,7 +18,7 @@ const AnecdoteList = () => {
         if (
           anecdote.content
             .toLocaleLowerCase()
-            .search(filterBy.toLocaleLowerCase()) !== -1
+            .search(filter.toLocaleLowerCase()) !== -1
         ) {
           return (
             <div key={anecdote.id}>

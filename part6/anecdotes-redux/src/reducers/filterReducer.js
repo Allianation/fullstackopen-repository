@@ -2,13 +2,10 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const filterSlice = createSlice({
   name: "filter",
-  initialState: {
-    filterBy: " ",
-  },
+  initialState: " ",
   reducers: {
     filterChange(state, action) {
-      state.filterBy = action.payload;
-      console.log(JSON.parse(JSON.stringify(state)));
+      return action.payload; // mutate the state all you want with immer
     },
   },
 });
